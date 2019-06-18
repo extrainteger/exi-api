@@ -160,6 +160,24 @@ end
 
 def finishing
   run "cp lib/exi-monolith/readme.md boilerplate.md"
+
+  say
+  say
+  say "================================================================================================="
+  say 
+  say 
+  say "You have successfully installed the boilerplate", :green
+  say
+  say "Don't forget to store your credentials inside config/credentials/*.key into somewhere else safely"
+  say
+  say "If you lose those keys, you won't be able to read your credentials.", :red
+  say
+  say "To get started :"
+  say "Go to directory : cd #{app_name}"
+  say "Start server : rails s"
+  say
+  say
+  say "================================================================================================="
 end
 
 
