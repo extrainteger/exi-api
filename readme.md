@@ -18,7 +18,7 @@ The boilerplate contains :
 
 Assume we want to create a project named `Hello`
 
-1. Create a new rails project `rails new hello -m https://github.com/extrainteger/exi-monolith/blob/master/template.rb -d postgresql`
+1. Create a new rails project `rails new hello -m https://raw.githubusercontent.com/extrainteger/exi-monolith/master/template.rb -d postgresql`
 2. Go to project `cd hello`
 3. Edit credential `rails credentials:edit --environment development`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-monolith/blob/master/credentials/example.yml)
 4. Edit credential `rails credentials:edit --environment test`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-monolith/blob/master/credentials/example.yml)
