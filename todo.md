@@ -1,0 +1,4 @@
+- [ ] Create Rest API generator : `rails g grape:resources post`
+- [ ] Create API generator : `rails g grape:resource post latest popular`
+- [ ] Add Capistrano
+- [ ] Add Docker
