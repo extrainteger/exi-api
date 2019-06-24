@@ -16,6 +16,9 @@ module API
     include Grape::Extensions::Hashie::Mash::ParamBuilder
 
     mount API::V1::Main
+    <% if @doorkeeper %>
+    mount API::Oauth
+    <% end  %>
 
     GrapeSwaggerRails.options.app_url            = "/v1/doc"
     GrapeSwaggerRails.options.url                = "/api"

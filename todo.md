@@ -1,5 +1,5 @@
 - [ ] Create Rest API generator : `rails g grape:resources post`
 - [ ] Create API generator : `rails g grape:resource post latest popular`
-- [ ] Add basic API authentication
+- [x] Add basic API authentication
 - [ ] Add Capistrano
 - [ ] Add Docker
