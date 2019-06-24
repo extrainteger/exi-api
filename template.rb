@@ -223,6 +223,10 @@ def stop_spring
   run "spring stop"
 end
 
+def remove_source
+  run `rm -rf lib/exi-monolith`
+end
+
 def finishing
   run "cp lib/exi-monolith/readme.md boilerplate.md"
 
@@ -267,4 +271,5 @@ after_bundle do
   copy_initializers
   finishing
   stop_spring
+  remove_source
 end
