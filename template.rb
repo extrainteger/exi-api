@@ -143,6 +143,7 @@ def prepare_doorkeeper
 
     gsub_file "config/initializers/wine_bouncer.rb", "config.auth_strategy = :default", "config.auth_strategy = :swagger"
   end
+  run "bundle exec cap install"
 end
 
 def prepare_environment
@@ -294,6 +295,17 @@ end
 
 def webpacker
   insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
+end
+
+def setup_capistrano
+  run 'rm Capfile'
+  run 'cp -r lib/exi-monolith/Capfile .'
+
+  run 'rm -r config/deploy.rb'
+  run 'cp -r lib/exi-monolith/config/deploy.rb config/deploy.rb'
+
+  run 'rm -r config/deploy'
+  run 'cp -r lib/exi-monolith/config/deploy config/deploy'
 end
 
 def stop_spring
