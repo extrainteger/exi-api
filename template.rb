@@ -49,6 +49,19 @@ def add_dependencies
     gem 'factory_bot_rails'
     gem 'faker'
   end
+
+  gem_group :development do
+    gem 'web-console', '>= 3.3.0'
+    gem 'listen', '>= 3.0.5', '< 3.2'
+    gem 'spring'
+    gem 'spring-watcher-listen', '~> 2.0.0'
+  
+    gem 'capistrano'
+    gem 'capistrano-rails'
+    gem 'capistrano3-unicorn'
+    gem 'capistrano-rvm'
+    gem 'capistrano-unicorn-monit', github: 'bypotatoes/capistrano-unicorn-monit'
+  end
   
   gem_group :test do
     gem 'database_cleaner'
@@ -109,6 +122,7 @@ def prepare_doorkeeper
 
     gsub_file "config/initializers/wine_bouncer.rb", "config.auth_strategy = :default", "config.auth_strategy = :swagger"
   end
+  run "bundle exec cap install"
 end
 
 def prepare_environment
@@ -219,6 +233,17 @@ def copy_initializers
   run 'cp -r lib/exi-monolith/config/initializers config/initializers'
 end
 
+def setup_capistrano
+  run 'rm Capfile'
+  run 'cp -r lib/exi-monolith/Capfile .'
+
+  run 'rm -r config/deploy.rb'
+  run 'cp -r lib/exi-monolith/config/deploy.rb config/deploy.rb'
+
+  run 'rm -r config/deploy'
+  run 'cp -r lib/exi-monolith/config/deploy config/deploy'
+end
+
 def stop_spring
   run "spring stop"
 end
@@ -269,6 +294,7 @@ after_bundle do
   override_database_yml
   prepare_environment
   copy_initializers
+  setup_capistrano
   finishing
   stop_spring
   remove_source
