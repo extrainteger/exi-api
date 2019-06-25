@@ -119,7 +119,7 @@ end
 
 If you choose Capistrano as your deployment tool, you just have to modify these 2 files `staging.rb` & `production.rb` inside config/deploy folder, both files are have the same source code except for the value.
 
-## What should I modified?
+## What should I modify?
 1. `set :application, "your_app_name"`
 2. `set :rvm_ruby_version, 'your_ruby_version' # example: ruby-2.5.3`
 3. `set :deploy_to, 'your_path_on_server' # example: /home/ubuntu/your_app_name`
