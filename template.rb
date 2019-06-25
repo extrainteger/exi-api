@@ -316,11 +316,11 @@ def setup_capistrano
     insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
     
     # config/deploy/
-    run 'rm -r config/deploy/staging.rb'
-    run 'rm -r config/deploy/production.rb'
+    run 'rm config/deploy/staging.rb'
+    run 'rm config/deploy/production.rb'
 
-    run 'cp -r lib/exi-monolith/config/deploy/staging.rb config/deploy/staging.rb'
-    run 'cp -r lib/exi-monolith/config/deploy/production.rb config/deploy/production.rb'
+    run 'cp lib/exi-monolith/config/deploy/staging.rb config/deploy/'
+    run 'cp lib/exi-monolith/config/deploy/production.rb config/deploy/'
   end
 end
 
@@ -379,5 +379,5 @@ after_bundle do
   webpacker
   finishing
   stop_spring
-  remove_source
+  # remove_source
 end
