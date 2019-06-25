@@ -1,9 +1,10 @@
 module API
   class Oauth < Grape::API
 
+    AUTHORIZATION_HEADERS = { Authorization: { description: 'Authorization', required: true } }.freeze
+
     resources :oauth do
-      # POST /oauth/token
-      desc 'Logging in user and get token for authorization' do
+      desc 'Authorization' do
         failure [ { code: 401, message: 'Unauthorized' }, { code: 400, message: 'Bad request' }, { code: 500, message: 'Internal server error' } ]
       end
       params do
@@ -15,13 +16,28 @@ module API
       post :token do
       end
 
-      desc 'Logging out user and revoke token. Always return {} even if your token is invalid !'
+      desc 'Revoke token'
       params do
         requires :client_id, type: String
         optional :client_secret, type: String
         optional :token, type: String, desc: 'Your token'
       end
       post :revoke do
+      end
+
+      desc 'Get token info' do
+        headers AUTHORIZATION_HEADERS
+      end
+      get "token/info" do
+      end
+
+      desc 'Token introspection'
+      params do
+        requires :client_id, type: String
+        optional :client_secret, type: String
+        requires :token, type: String
+      end
+      post :introspect do
       end
     end # resources :oauth
 
@@ -34,8 +50,8 @@ module API
       mount_path:              "doc/oauth",
       hide_format:             true,
       info: {
-        title: "Your API",
-        description: "Your API"
+        title: "You API Authentication",
+        description: "You API Authentication"
       }
     )
   end
