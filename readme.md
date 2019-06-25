@@ -1,6 +1,6 @@
 # Boilerplate
 
-The purpose of this [template](https://github.com/extrainteger/exi-monolith/blob/master/readme.md) is to accomodate monolith API project including its dashboard.
+The purpose of this [template](https://github.com/extrainteger/exi-api/blob/master/readme.md) is to accomodate monolith API project including its dashboard.
 
 The boilerplate contains :
 
@@ -18,7 +18,7 @@ The boilerplate contains :
 
 Assume we want to create a project named `Hello`
 
-1. Create a new rails project `rails new hello -m https://raw.githubusercontent.com/extrainteger/exi-monolith/master/template.rb -d postgresql`
+1. Create a new rails project `rails new hello -m https://raw.githubusercontent.com/extrainteger/exi-api/master/template.rb -d postgresql`
 2. While installing in progress you will be asked some question
 
 ## Doorkeeper
@@ -36,8 +36,8 @@ Answer `y` if you wish to use Capistrano
 # Getting started
 
 1. Go to project `cd hello`
-2. Edit credential `rails credentials:edit --environment development`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-monolith/blob/master/credentials/example.yml)
-3. Edit credential `rails credentials:edit --environment test`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-monolith/blob/master/credentials/example.yml)
+2. Edit credential `rails credentials:edit --environment development`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-api/blob/master/credentials/example.yml)
+3. Edit credential `rails credentials:edit --environment test`. Modify the content from [credentials/example.yml](https://github.com/extrainteger/exi-api/blob/master/credentials/example.yml)
 4. Prepare database `rails db:create && rails db:migrate && rails seed:migrate`
 
 # Dashboard
@@ -130,7 +130,7 @@ Currently, the default setting of Capistrano is set to unicorn, in the next rele
 
 # Todo
 
-Please Read [todo.md](https://github.com/extrainteger/exi-monolith/blob/master/todo.md)
+Please Read [todo.md](https://github.com/extrainteger/exi-api/blob/master/todo.md)
 
 
 

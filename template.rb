@@ -21,8 +21,8 @@ end
 
 def add_template_repository_to_source_path
   inside('lib') do
-    run "cp -r ../../exi-monolith ."
-    git clone: "--quiet https://github.com/extrainteger/exi-monolith" unless File.exists? "lib/exi-monolith"
+    run "cp -r ../../exi-api ."
+    git clone: "--quiet https://github.com/extrainteger/exi-api" unless File.exists? "lib/exi-api"
   end
 end 
 
@@ -173,8 +173,8 @@ end
 def boilerplate_dashboard
   run 'mv app/assets/stylesheets/active_admin.scss app/assets/stylesheets/active_admin.scss.ori'
   run 'mv app/assets/javascripts/active_admin.js app/assets/javascripts/active_admin.js.ori'
-  run 'cp lib/exi-monolith/app/assets/stylesheets/active_admin.scss app/assets/stylesheets'
-  run 'cp lib/exi-monolith/app/assets/javascripts/active_admin.js app/assets/javascripts'
+  run 'cp lib/exi-api/app/assets/stylesheets/active_admin.scss app/assets/stylesheets'
+  run 'cp lib/exi-api/app/assets/javascripts/active_admin.js app/assets/javascripts'
 
   environment 'config.hosts << "dashboard.lvh.me"', env: 'development'
 
@@ -193,13 +193,13 @@ def boilerplate_api
     run 'mkdir API'
     run 'mkdir API/v1'
   end
-  run 'cp lib/exi-monolith/app/controllers/API/error_formatter.rb app/controllers/API/error_formatter.rb'
-  template "#{destination_root}/lib/exi-monolith/app/controllers/API/init.rb.erb", 'app/controllers/API/init.rb'
-  run 'cp lib/exi-monolith/app/controllers/API/success_formatter.rb app/controllers/API/success_formatter.rb'
-  run 'cp -r lib/exi-monolith/app/controllers/API/v1 app/controllers/API'
+  run 'cp lib/exi-api/app/controllers/API/error_formatter.rb app/controllers/API/error_formatter.rb'
+  template "#{destination_root}/lib/exi-api/app/controllers/API/init.rb.erb", 'app/controllers/API/init.rb'
+  run 'cp lib/exi-api/app/controllers/API/success_formatter.rb app/controllers/API/success_formatter.rb'
+  run 'cp -r lib/exi-api/app/controllers/API/v1 app/controllers/API'
 
   if use_doorkeeper?
-    run 'cp lib/exi-monolith/app/controllers/API/oauth.rb app/controllers/API/oauth.rb' 
+    run 'cp lib/exi-api/app/controllers/API/oauth.rb app/controllers/API/oauth.rb' 
     insert_into_file "app/controllers/API/v1/main.rb", "\nrequire 'doorkeeper/grape/helpers'", after: 'require "grape-swagger"'
     insert_into_file "app/controllers/API/v1/main.rb", "\n\n      helpers Doorkeeper::Grape::Helpers", after: "include API::V1::Config"
     insert_into_file "app/controllers/API/v1/main.rb", "\n      use ::WineBouncer::OAuth2", after: "helpers Doorkeeper::Grape::Helpers"
@@ -208,9 +208,9 @@ end
 
 def prepare_rspec
   run 'mkdir spec/support'
-  run 'cp lib/exi-monolith/spec/support/json_response_reader.rb spec/support/json_response_reader.rb'
+  run 'cp lib/exi-api/spec/support/json_response_reader.rb spec/support/json_response_reader.rb'
   run 'mv spec/rails_helper.rb spec/rails_helper.rb.ori'
-  run 'cp lib/exi-monolith/spec/rails_helper.rb spec/rails_helper.rb'
+  run 'cp lib/exi-api/spec/rails_helper.rb spec/rails_helper.rb'
 end
 
 def write_routes
@@ -231,11 +231,11 @@ end
 
 def override_database_yml
   run 'rm config/database.yml'
-  run 'cp lib/exi-monolith/config/database.yml config/database.yml'
+  run 'cp lib/exi-api/config/database.yml config/database.yml'
 end
 
 def copy_initializers
-  run 'cp -r lib/exi-monolith/config/initializers config/initializers'
+  run 'cp -r lib/exi-api/config/initializers config/initializers'
 end
 
 def prepare_capistrano
@@ -261,8 +261,8 @@ def setup_capistrano
     run 'rm config/deploy/staging.rb'
     run 'rm config/deploy/production.rb'
 
-    run 'cp lib/exi-monolith/config/deploy/staging.rb config/deploy/'
-    run 'cp lib/exi-monolith/config/deploy/production.rb config/deploy/'
+    run 'cp lib/exi-api/config/deploy/staging.rb config/deploy/'
+    run 'cp lib/exi-api/config/deploy/production.rb config/deploy/'
   end
 end
 
@@ -271,11 +271,11 @@ def stop_spring
 end
 
 def remove_source
-  run `rm -rf lib/exi-monolith`
+  run `rm -rf lib/exi-api`
 end
 
 def finishing
-  run "cp lib/exi-monolith/readme.md boilerplate.md"
+  run "cp lib/exi-api/readme.md boilerplate.md"
 
   say
   say
@@ -291,7 +291,7 @@ def finishing
   say
   say "To get started :", :green
   say
-  say "Follow the instruction https://github.com/extrainteger/exi-monolith/blob/master/readme.md#getting-started", :green
+  say "Follow the instruction https://github.com/extrainteger/exi-api/blob/master/readme.md#getting-started", :green
   say
   say
   say "================================================================================================="
