@@ -34,10 +34,19 @@ def use_doorkeeper?
   @doorkeeper
 end
 
+def ask_capistrano
+  @capistrano = ask("Do you want to use Capistrano? (y / n)") == "y" ? true : false
+end
+
+def use_capistrano?
+  @capistrano
+end
+
 def apply_template!
   assert_minimum_rails_version
   assert_postgresql
   ask_doorkeeper
+  ask_capistrano
   add_template_repository_to_source_path
 end
 
@@ -48,6 +57,16 @@ def add_dependencies
     gem 'guard-rspec', require: false
     gem 'factory_bot_rails'
     gem 'faker'
+  end
+
+  if use_capistrano?
+    gem_group :development do
+      gem 'capistrano'
+      gem 'capistrano-rails'
+      gem 'capistrano3-unicorn'
+      gem 'capistrano-rvm'
+      gem 'capistrano-unicorn-monit', github: 'bypotatoes/capistrano-unicorn-monit'
+    end
   end
   
   gem_group :test do
@@ -219,6 +238,34 @@ def copy_initializers
   run 'cp -r lib/exi-monolith/config/initializers config/initializers'
 end
 
+def prepare_capistrano
+  run "bundle exec cap install" if use_capistrano?
+end
+
+def setup_capistrano
+  if use_capistrano?
+    # Capfile
+    gsub_file 'Capfile', '# require "capistrano/rvm"', 'require "capistrano/rvm"'
+    gsub_file 'Capfile', '# require "capistrano/bundler"', 'require "capistrano/bundler"'
+    gsub_file 'Capfile', '# require "capistrano/rails/assets"', 'require "capistrano/rails/assets"'
+    gsub_file 'Capfile', '# require "capistrano/rails/migrations"', 'require "capistrano/rails/migrations"'
+    insert_into_file "Capfile", "\nrequire 'capistrano/seed_migration_tasks'", after: '# require "capistrano/passenger"'
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
+
+    # deploy.rb
+    gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
+    insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
+    
+    # config/deploy/
+    run 'rm config/deploy/staging.rb'
+    run 'rm config/deploy/production.rb'
+
+    run 'cp lib/exi-monolith/config/deploy/staging.rb config/deploy/'
+    run 'cp lib/exi-monolith/config/deploy/production.rb config/deploy/'
+  end
+end
+
 def stop_spring
   run "spring stop"
 end
@@ -269,7 +316,9 @@ after_bundle do
   override_database_yml
   prepare_environment
   copy_initializers
+  prepare_capistrano
+  setup_capistrano
   finishing
   stop_spring
-  remove_source
+  # remove_source
 end
