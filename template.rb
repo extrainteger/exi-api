@@ -143,7 +143,6 @@ def prepare_doorkeeper
 
     gsub_file "config/initializers/wine_bouncer.rb", "config.auth_strategy = :default", "config.auth_strategy = :swagger"
   end
-  run "bundle exec cap install"
 end
 
 def prepare_environment
@@ -297,15 +296,29 @@ def webpacker
   insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
 end
 
+def prepare_capistrano
+  run "bundle exec cap install" if use_capistrano?
+end
+
 def setup_capistrano
-  run 'rm Capfile'
-  run 'cp -r lib/exi-monolith/Capfile .'
+  if use_capistrano?
+    # Capfile
+    gsub_file 'Capfile', '# require "capistrano/rvm"', 'require "capistrano/rvm"'
+    gsub_file 'Capfile', '# require "capistrano/bundler"', 'require "capistrano/bundler"'
+    gsub_file 'Capfile', '# require "capistrano/rails/assets"', 'require "capistrano/rails/assets"'
+    gsub_file 'Capfile', '# require "capistrano/rails/migrations"', 'require "capistrano/rails/migrations"'
+    insert_into_file "Capfile", "\nrequire 'capistrano/seed_migration_tasks'", after: '# require "capistrano/passenger"'
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
 
-  run 'rm -r config/deploy.rb'
-  run 'cp -r lib/exi-monolith/config/deploy.rb config/deploy.rb'
-
-  run 'rm -r config/deploy'
-  run 'cp -r lib/exi-monolith/config/deploy config/deploy'
+    # deploy.rb
+    gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
+    insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
+    
+    # config/deploy/
+    run 'rm -r config/deploy'
+    run 'cp -r lib/exi-monolith/config/deploy config/deploy'
+  end
 end
 
 def stop_spring
