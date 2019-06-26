@@ -27,7 +27,7 @@ def add_template_repository_to_source_path
 end 
 
 def ask_doorkeeper
-  @doorkeeper = ask("Do you want to use Doorkeeper & WineBouncer? (y / n)") == "y" ? true : false
+  @doorkeeper = ask("\e[1m \e[32m Do you want to use Doorkeeper & WineBouncer? \e[0m (y / n)") == "y" ? true : false
 end
 
 def use_doorkeeper?
@@ -35,11 +35,19 @@ def use_doorkeeper?
 end
 
 def ask_capistrano
-  @capistrano = ask("Do you want to use Capistrano? (y / n)") == "y" ? true : false
+  @capistrano = ask("\e[1m \e[32m Do you want to use Capistrano? \e[0m (y / n)") == "y" ? true : false
 end
 
 def use_capistrano?
   @capistrano
+end
+
+def ask_swagger_theme
+  @grape = ask("\e[1m \e[32m Do you want to use grape-swagger custom theme? \e[0m (y / n)") == "y" ? true : false
+end
+
+def use_grape_theme?
+  @grape
 end
 
 def apply_template!
@@ -47,6 +55,7 @@ def apply_template!
   assert_postgresql
   ask_doorkeeper
   ask_capistrano
+  ask_swagger_theme
   add_template_repository_to_source_path
 end
 
@@ -98,6 +107,8 @@ def add_dependencies
     gem 'doorkeeper' 
     gem 'wine_bouncer', '~> 1.0.4'
   end
+
+  gem 'grape-swagger-rails-themes' if use_grape_theme?
 end
 
 def install_dependencies
@@ -112,6 +123,8 @@ def install_dependencies
 
     generate "wine_bouncer:initializer"
   end
+
+  generate "grape_swagger_rails_themes:install" if use_grape_theme?
 end
 
 def prepare_doorkeeper
@@ -254,16 +267,23 @@ def setup_capistrano
     insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
 
     # deploy.rb
+    gsub_file "config/deploy.rb", '# append :linked_files, "config/database.yml"', 'append :linked_files, "config/credentials/staging.key", "config/credentials/staging.yml.enc", "config/unicorn/staging.rb"'
     gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
     insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
     
     # config/deploy/
     run 'rm config/deploy/staging.rb'
     run 'rm config/deploy/production.rb'
+    run 'cp lib/exi-api/config/deploy/production.rb config/deploy/example.rb'
 
-    run 'cp lib/exi-api/config/deploy/staging.rb config/deploy/'
-    run 'cp lib/exi-api/config/deploy/production.rb config/deploy/'
+    # config/unicorn
+    run 'mkdir config/unicorn'
+    run 'cp lib/exi-api/config/unicorn/production.rb config/unicorn/example.rb'
   end
+end
+
+def webpacker
+  insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
 end
 
 def stop_spring
@@ -318,6 +338,7 @@ after_bundle do
   copy_initializers
   prepare_capistrano
   setup_capistrano
+  webpacker
   finishing
   stop_spring
   # remove_source
