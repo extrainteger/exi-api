@@ -108,8 +108,6 @@ def add_dependencies
     gem 'doorkeeper' 
     gem 'wine_bouncer', '~> 1.0.4'
   end
-
-  gem 'grape-swagger-rails-themes' if use_grape_theme?
 end
 
 def install_dependencies
@@ -125,8 +123,6 @@ def install_dependencies
 
     generate "wine_bouncer:initializer"
   end
-
-  generate "grape_swagger_rails_themes:install" if use_grape_theme?
 end
 
 def prepare_doorkeeper
@@ -355,5 +351,5 @@ after_bundle do
   webpacker
   finishing
   stop_spring
-  # remove_source
+  remove_source
 end
