@@ -277,18 +277,17 @@ def setup_capistrano
     gsub_file 'Capfile', '# require "capistrano/rails/assets"', 'require "capistrano/rails/assets"'
     gsub_file 'Capfile', '# require "capistrano/rails/migrations"', 'require "capistrano/rails/migrations"'
     insert_into_file "Capfile", "\nrequire 'capistrano/seed_migration_tasks'", after: '# require "capistrano/passenger"'
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
+    insert_into_file "Capfile", "\nrequire 'capistrano3/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano3/unicorn'"
 
     # deploy.rb
-    gsub_file "config/deploy.rb", '# append :linked_files, "config/database.yml"', 'append :linked_files, "config/credentials/staging.key", "config/credentials/staging.yml.enc", "config/unicorn/staging.rb"'
     gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
     insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
     
     # config/deploy/
     run 'rm config/deploy/staging.rb'
     run 'rm config/deploy/production.rb'
-    run 'cp lib/exi-api/config/deploy/production.rb config/deploy/example.rb'
+    run 'cp lib/exi-api/config/deploy/staging.rb config/deploy/example.rb'
 
     # config/unicorn
     run 'mkdir config/unicorn'
