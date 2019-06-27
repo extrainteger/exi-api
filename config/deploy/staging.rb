@@ -1,5 +1,7 @@
 set :application, "your_app_name"
 
+set :unicorn_service_name, 'your_app_name'
+
 append :linked_files, "config/credentials/staging.key", "config/credentials/staging.yml.enc", "config/unicorn/staging.rb"
 
 set :rvm_type, :auto
