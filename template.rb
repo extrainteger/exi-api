@@ -81,6 +81,14 @@ def add_dependencies
   gem_group :test do
     gem 'database_cleaner'
   end
+
+  group :staging do
+    gem 'unicorn'
+  end
+  
+  group :production do
+    gem 'unicorn'
+  end
   
   gem 'devise'
   gem 'activeadmin'
