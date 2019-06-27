@@ -42,20 +42,20 @@ def use_capistrano?
   @capistrano
 end
 
-def ask_swagger_theme
-  @grape = ask("\e[1m \e[32m Do you want to use grape-swagger custom theme? \e[0m (y / n)") == "y" ? true : false
-end
+# def ask_swagger_theme
+#   @grape = ask("\e[1m \e[32m Do you want to use grape-swagger custom theme? \e[0m (y / n)") == "y" ? true : false
+# end
 
-def use_grape_theme?
-  @grape
-end
+# def use_grape_theme?
+#   @grape
+# end
 
 def apply_template!
   assert_minimum_rails_version
   assert_postgresql
   ask_doorkeeper
   ask_capistrano
-  ask_swagger_theme
+  # ask_swagger_theme
   add_template_repository_to_source_path
 end
 
@@ -102,19 +102,19 @@ def add_dependencies
   
   gem 'grape-swagger'
   gem 'grape-swagger-rails'
+  gem 'grape-swagger-rails-themes'
 
   if use_doorkeeper?
     gem 'doorkeeper' 
     gem 'wine_bouncer', '~> 1.0.4'
   end
-
-  gem 'grape-swagger-rails-themes' if use_grape_theme?
 end
 
 def install_dependencies
   generate "active_admin:install"
   rails_command "seed_migration:install:migrations"
   generate "rspec:install"
+  generate "grape_swagger_rails_themes:install"
 
   if use_doorkeeper?
     generate "doorkeeper:install"
@@ -123,8 +123,6 @@ def install_dependencies
 
     generate "wine_bouncer:initializer"
   end
-
-  generate "grape_swagger_rails_themes:install" if use_grape_theme?
 end
 
 def prepare_doorkeeper
@@ -345,5 +343,5 @@ after_bundle do
   webpacker
   finishing
   stop_spring
-  # remove_source
+  remove_source
 end
