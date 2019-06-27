@@ -76,6 +76,14 @@ def add_dependencies
       gem 'capistrano-rvm'
       gem 'capistrano-unicorn-monit', github: 'bypotatoes/capistrano-unicorn-monit'
     end
+
+    gem_group :staging do
+      gem 'unicorn'
+    end
+  
+    gem_group :production do
+      gem 'unicorn'
+    end
   end
   
   gem_group :test do
@@ -257,10 +265,6 @@ def webpacker
   insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
 end
 
-def prepare_capistrano
-  run "bundle exec cap install" if use_capistrano?
-end
-
 def setup_capistrano
   if use_capistrano?
     # Capfile
@@ -269,23 +273,26 @@ def setup_capistrano
     gsub_file 'Capfile', '# require "capistrano/rails/assets"', 'require "capistrano/rails/assets"'
     gsub_file 'Capfile', '# require "capistrano/rails/migrations"', 'require "capistrano/rails/migrations"'
     insert_into_file "Capfile", "\nrequire 'capistrano/seed_migration_tasks'", after: '# require "capistrano/passenger"'
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
+    insert_into_file "Capfile", "\nrequire 'capistrano3/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
+    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano3/unicorn'"
 
     # deploy.rb
-    gsub_file "config/deploy.rb", '# append :linked_files, "config/database.yml"', 'append :linked_files, "config/credentials/staging.key", "config/credentials/staging.yml.enc", "config/unicorn/staging.rb"'
     gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
     insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
     
     # config/deploy/
     run 'rm config/deploy/staging.rb'
     run 'rm config/deploy/production.rb'
-    run 'cp lib/exi-api/config/deploy/production.rb config/deploy/example.rb'
+    run 'cp lib/exi-api/config/deploy/staging.rb config/deploy/example.rb'
 
     # config/unicorn
     run 'mkdir config/unicorn'
     run 'cp lib/exi-api/config/unicorn/production.rb config/unicorn/example.rb'
   end
+end
+
+def add_gitignore
+  insert_into_file ".gitignore", "\n\n/config/deploy/production.rb \n\n/config/unicorn/production.rb \n/config/unicorn/staging.rb \n\n/config/credentials/staging.key \n/config/credentials/staging.yml.enc \n\n/config/credentials/production.key \n/config/credentials/production.yml.enc", after: ".yarn-integrity"
 end
 
 def stop_spring
@@ -341,6 +348,7 @@ after_bundle do
   prepare_capistrano
   setup_capistrano
   webpacker
+  add_gitignore
   finishing
   stop_spring
   remove_source
