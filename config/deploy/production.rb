@@ -7,8 +7,8 @@ set :rvm_ruby_version, 'your_ruby_version' # example: ruby-2.6.3
 
 set :deploy_to, 'your_path_on_server' # example: /home/ubuntu/your_app_name
 
-set :branch, 'master'
-set :rails_env, 'production'
+set :branch, 'your_branch'
+set :rails_env, 'your_environment'
 
 server "server-ip", user: "server-name", roles: %w{app web db} # example server-ip: 10.10.10.10 server-name: ubuntu
 
