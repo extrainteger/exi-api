@@ -303,6 +303,10 @@ def setup_capistrano
   end
 end
 
+def add_gitignore
+  insert_into_file ".gitignore", "\n\n/config/deploy/production.rb \n\n/config/unicorn/production.rb \n/config/unicorn/staging.rb \n\n/config/credentials/staging.key \n/config/credentials/staging.yml.enc \n\n/config/credentials/production.key \n/config/credentials/production.yml.enc", after: ".yarn-integrity"
+end
+
 def stop_spring
   run "spring stop"
 end
@@ -356,6 +360,7 @@ after_bundle do
   prepare_capistrano
   setup_capistrano
   webpacker
+  add_gitignore
   finishing
   stop_spring
   remove_source
