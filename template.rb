@@ -265,18 +265,6 @@ def webpacker
   insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
 end
 
-def prepare_capistrano
-  run "bundle exec cap install" if use_capistrano?
-end
-
-def webpacker
-  insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
-end
-
-def prepare_capistrano
-  run "bundle exec cap install" if use_capistrano?
-end
-
 def setup_capistrano
   if use_capistrano?
     # Capfile
