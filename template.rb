@@ -76,18 +76,18 @@ def add_dependencies
       gem 'capistrano-rvm'
       gem 'capistrano-unicorn-monit', github: 'bypotatoes/capistrano-unicorn-monit'
     end
+
+    gem_group :staging do
+      gem 'unicorn'
+    end
+  
+    gem_group :production do
+      gem 'unicorn'
+    end
   end
   
   gem_group :test do
     gem 'database_cleaner'
-  end
-
-  group :staging do
-    gem 'unicorn'
-  end
-  
-  group :production do
-    gem 'unicorn'
   end
   
   gem 'devise'
