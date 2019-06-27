@@ -255,6 +255,14 @@ def prepare_capistrano
   run "bundle exec cap install" if use_capistrano?
 end
 
+def webpacker
+  insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
+end
+
+def prepare_capistrano
+  run "bundle exec cap install" if use_capistrano?
+end
+
 def setup_capistrano
   if use_capistrano?
     # Capfile
@@ -279,38 +287,6 @@ def setup_capistrano
     # config/unicorn
     run 'mkdir config/unicorn'
     run 'cp lib/exi-api/config/unicorn/production.rb config/unicorn/example.rb'
-  end
-end
-
-def webpacker
-  insert_into_file "config/webpacker.yml", "\n\nstaging:\n  <<: *default\n\n  compile: false\n\n  extract_css: true\n\n  cache_manifest: true", after: "  public_output_path: packs-test"
-end
-
-def prepare_capistrano
-  run "bundle exec cap install" if use_capistrano?
-end
-
-def setup_capistrano
-  if use_capistrano?
-    # Capfile
-    gsub_file 'Capfile', '# require "capistrano/rvm"', 'require "capistrano/rvm"'
-    gsub_file 'Capfile', '# require "capistrano/bundler"', 'require "capistrano/bundler"'
-    gsub_file 'Capfile', '# require "capistrano/rails/assets"', 'require "capistrano/rails/assets"'
-    gsub_file 'Capfile', '# require "capistrano/rails/migrations"', 'require "capistrano/rails/migrations"'
-    insert_into_file "Capfile", "\nrequire 'capistrano/seed_migration_tasks'", after: '# require "capistrano/passenger"'
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn'", after: "require 'capistrano/seed_migration_tasks'"
-    insert_into_file "Capfile", "\nrequire 'capistrano/unicorn/monit'", after: "require 'capistrano/unicorn'"
-
-    # deploy.rb
-    gsub_file "config/deploy.rb", '# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"', 'append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"'
-    insert_into_file "config/deploy.rb", "\n\nafter 'deploy:migrating', 'seed:migrate'", after: "# set :ssh_options, verify_host_key: :secure"
-    
-    # config/deploy/
-    run 'rm config/deploy/staging.rb'
-    run 'rm config/deploy/production.rb'
-
-    run 'cp lib/exi-monolith/config/deploy/staging.rb config/deploy/'
-    run 'cp lib/exi-monolith/config/deploy/production.rb config/deploy/'
   end
 end
 
