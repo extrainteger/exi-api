@@ -254,7 +254,7 @@ def override_database_yml
 end
 
 def copy_initializers
-  run 'cp -r lib/exi-api/config/initializers config/initializers'
+  run 'cp -r lib/exi-api/config/initializers/. config/initializers'
 end
 
 def prepare_capistrano
