@@ -254,7 +254,7 @@ def override_database_yml
 end
 
 def copy_initializers
-  run 'cp -r lib/exi-api/config/initializers config/initializers'
+  run 'cp -r lib/exi-api/config/initializers/. config/initializers'
 end
 
 def prepare_capistrano
@@ -292,7 +292,8 @@ def setup_capistrano
 end
 
 def add_gitignore
-  insert_into_file ".gitignore", "\n\n/config/deploy/production.rb \n\n/config/unicorn/production.rb \n/config/unicorn/staging.rb \n\n/config/credentials/staging.key \n/config/credentials/staging.yml.enc \n\n/config/credentials/production.key \n/config/credentials/production.yml.enc", after: ".yarn-integrity"
+  # insert_into_file ".gitignore", "\n\n/config/deploy/production.rb \n\n/config/unicorn/production.rb \n/config/unicorn/staging.rb \n\n/config/credentials/staging.key \n/config/credentials/staging.yml.enc \n\n/config/credentials/production.key \n/config/credentials/production.yml.enc", after: ".yarn-integrity"
+  insert_into_file ".gitignore", "\n\n/config/deploy/production.rb \n\n/config/unicorn/production.rb \n/config/unicorn/staging.rb \n\n/config/credentials/staging.key \n\n/config/credentials/production.key", after: ".yarn-integrity"
 end
 
 def stop_spring
