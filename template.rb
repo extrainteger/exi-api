@@ -99,6 +99,7 @@ def add_dependencies
   gem 'grape'
   gem 'grape-middleware-logger'
   gem 'grape-entity'
+  gem 'grape_resource'
   
   gem 'hashie-forbidden_attributes'
   gem 'hashdiff', ['>= 1.0.0.beta1', '< 2.0.0']
@@ -131,6 +132,10 @@ def install_dependencies
 
     generate "wine_bouncer:initializer"
   end
+end
+
+def install_dependencies_api
+  generate "grape_resource:install"
 end
 
 def prepare_doorkeeper
@@ -342,6 +347,7 @@ after_bundle do
   boilerplate_models
   boilerplate_dashboard
   boilerplate_api
+  install_dependencies_api
   write_routes
   override_database_yml
   prepare_environment
