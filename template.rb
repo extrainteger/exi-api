@@ -91,8 +91,12 @@ def add_dependencies
   end
   
   gem 'devise'
+  # gem 'activeadmin'
+  # gem "active_material", github: "vigetlabs/active_material"
+
   gem 'activeadmin'
-  gem "active_material", github: "vigetlabs/active_material"
+  gem 'active_material', github: 'vigetlabs/active_material', branch: 'nh-responsive-redesign'
+  gem 'active_material_icon' # ActiveMaterialIcon after active_admin and active_material
   
   gem 'seed_migration'
   
@@ -124,6 +128,7 @@ def install_dependencies
   rails_command "seed_migration:install:migrations"
   generate "rspec:install"
   generate "grape_swagger_rails_themes:install"
+  generate "active_material_icon:install"
 
   if use_doorkeeper?
     generate "doorkeeper:install"
